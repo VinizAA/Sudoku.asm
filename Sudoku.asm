@@ -6,6 +6,8 @@ TITLE PLINIO ZANCHETTA DE SOUZA FERNANDES FILHO - RA:22023003
     ERRO DB 10, "DIGITE UM NUMERO DE 0 a 9$"
     NUM DB 10, "DIGITE O NUMERO (0 a 9): $"
 
+    POSICAO DB "POSICAO:     $"
+
 .code
 
     LIMPATELA MACRO 
@@ -92,7 +94,7 @@ main PROC
     MOV BL, 0Fh ;cor de fundo
     INT 10h
     
-    POSI 1, 93
+    POSI 0, 93
     ESCREVE 'S', magenta
     ESCREVE 'U', magenta
     ESCREVE 'D', magenta
@@ -111,8 +113,6 @@ main PROC
     MOV SI,4
     MOV DI,90
     ;========================================================================================
-    POSI 4, 90
-    ESCREVE '_', vermelho
 prox4:
     MOV AH,07h
     INT 21h
@@ -135,26 +135,14 @@ prox3:
     JNE prox4
     SUB DI,2
 TESTEDOKARAIO:
-        MOV CX, SI 
-        MOV DH, CL 
-        MOV CX, DI          
-        MOV DL, CL 
-        MOV AH, 02h         
-        MOV BH, 0           
-        INT 10h
-    ESCREVE '_', vermelho
+    MOV CX, SI 
+    MOV DH, CL 
+    MOV CX, DI          
+    MOV DL, CL 
+    MOV AH, 02h         
+    MOV BH, 0           
+    INT 10h
     JMP prox4
-
-
-
-
-
-
-
-
-
-
-
 
     MOV AH, 4Ch
     INT 21h
@@ -204,6 +192,48 @@ RET
 layout ENDP
 
 numeros PROC
+    POSI 23, 91
+    IMPRIME POSICAO
+
+    POSI 4, 88
+    ESCREVE '1', verde
+    POSI 6, 88
+    ESCREVE '2', verde
+    POSI 8, 88
+    ESCREVE '3', verde
+    POSI 10, 88
+    ESCREVE '4', verde
+    POSI 12, 88
+    ESCREVE '5', verde
+    POSI 14, 88
+    ESCREVE '6', verde
+    POSI 16, 88
+    ESCREVE '7', verde
+    POSI 18, 88
+    ESCREVE '8', verde
+    POSI 20, 88
+    ESCREVE '9', verde
+    
+    POSI 2, 90
+    ESCREVE '1', verde
+    POSI 2, 92
+    ESCREVE '2', verde
+    POSI 2, 94
+    ESCREVE '3', verde
+    POSI 2, 96
+    ESCREVE '4', verde
+    POSI 2, 98
+    ESCREVE '5', verde
+    POSI 2, 100
+    ESCREVE '6', verde
+    POSI 2, 102
+    ESCREVE '7', verde
+    POSI 2, 104
+    ESCREVE '8', verde
+    POSI 2, 106
+    ESCREVE '9', verde
+
+
     POSI 4, 90
     ESCREVE '5', azul
     POSI 4, 92
