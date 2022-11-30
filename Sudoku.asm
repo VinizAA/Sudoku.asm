@@ -1,5 +1,5 @@
 TITLE VINICIUS AFONSO ALVAREZ - RA:22006181
-TITLE PLINAO DA MASSA - RA:
+TITLE PLINIO ZANCHETTA DE SOUZA FERNANDES FILHO - RA:22023003
 
 .model small
 .data
@@ -105,49 +105,57 @@ main PROC
     ESCREVE 'M', magenta
     ESCREVE 'E', magenta
 
-    POSI 5, 112
-    ESCREVE 'D', marrom
-    ESCREVE 'I', marrom
-    ESCREVE 'C', marrom
-    ESCREVE 'A', marrom
-
-    POSI 8, 110
-    ESCREVE 'D', marrom
-    ESCREVE 'E', marrom
-    ESCREVE 'S', marrom
-    ESCREVE 'F', marrom
-    ESCREVE 'A', marrom
-    ESCREVE 'Z', marrom
-    ESCREVE 'E', marrom
-    ESCREVE 'R', marrom
-
     CALL layout
-    XOR DX, DX
-solta:
-    MOV AX, 3
-    INT 33h     
-    CMP BX, 1   
-    JNE solta     
-solta1:
-    MOV AX, 3
-    INT 33h     
-    CMP BX, 0   
-    JNE solta1
-    
-    ;CX --> coluna
-    ;DX --> linha
-
-    MOV DH, DL ;linha vai para DH
-        XOR BX, BX
-        MOV BX, CX
-    MOV DL, BL ;coluna vai pra DL           
-    MOV AH, 02h         
-    MOV BH, 0           
-    INT 10h
-
-    MOV AH, 08h
+    ;PUSH 4
+    ;PUSH 90
+    MOV SI,4
+    MOV DI,90
+    ;========================================================================================
+    POSI 4, 90
+    ESCREVE '_', vermelho
+prox4:
+    MOV AH,07h
     INT 21h
-    ESCREVE AL, vermelho
+    CMP AL,'w'
+    JNE prox1
+    SUB SI,2
+    JMP TESTEDOKARAIO
+prox1:
+    CMP AL,'s'
+    JNE prox2
+    ADD SI,2
+    JMP TESTEDOKARAIO
+prox2:
+    CMP AL,'d'
+    JNE prox3
+    ADD DI,2
+    JMP TESTEDOKARAIO
+prox3:
+    CMP AL,'a'
+    JNE prox4
+    SUB DI,2
+TESTEDOKARAIO:
+        MOV CX, SI 
+        MOV DH, CL 
+        MOV CX, DI          
+        MOV DL, CL 
+        MOV AH, 02h         
+        MOV BH, 0           
+        INT 10h
+    ESCREVE '_', vermelho
+    JMP prox4
+
+
+
+
+
+
+
+
+
+
+
+
     MOV AH, 4Ch
     INT 21h
 main ENDP
@@ -264,8 +272,70 @@ numeros PROC
     ESCREVE '7', azul
     POSI 20, 106
     ESCREVE '9', azul
-    POSI 20, 108
-    ESCREVE '0', branco
 RET
 numeros ENDP
+
+cima PROC
+    POP CX 
+    POP DI 
+    POP SI 
+    SUB SI,2
+    MOV AH,0ch 
+    MOV al,vermelho
+    MOV CX, DI 
+    MOV DX, SI
+    int 10h
+    PUSH SI
+    PUSH DI 
+    PUSH CX
+RET 
+cima endP
+
+baixo PROC
+    POP CX 
+    POP DI 
+    POP SI 
+    ADD SI,2
+    MOV AH,0ch 
+    MOV al,vermelho
+    MOV CX, DI 
+    MOV DX, SI
+    int 10h
+    PUSH SI
+    PUSH DI 
+    PUSH CX
+RET 
+baixo endP
+
+direita PROC
+    POP CX 
+    POP DI 
+    POP SI 
+    ADD DI,2
+    MOV AH,0ch 
+    MOV al,vermelho
+    MOV CX, DI 
+    MOV DX, SI
+    int 10h
+    PUSH SI
+    PUSH DI 
+    PUSH CX
+RET 
+direita endP
+
+esquerda PROC
+    POP CX 
+    POP DI 
+    POP SI 
+    SUB DI,2
+    MOV AH,0ch 
+    MOV al,vermelho
+    MOV CX, DI 
+    MOV DX, SI
+    int 10h
+    PUSH SI
+    PUSH DI 
+    PUSH CX
+RET 
+esquerda endP
 end main
