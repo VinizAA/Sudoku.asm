@@ -6,7 +6,7 @@ TITLE PLINIO ZANCHETTA DE SOUZA FERNANDES FILHO - RA:22023003
     ERRO DB 10, "DIGITE UM NUMERO DE 0 a 9$"
     NUM DB 10, "DIGITE O NUMERO (0 a 9): $"
 
-    POSICAO DB "POSICAO:     $"
+    POSICAO DB "POSICAO:$"
 
 .code
 
@@ -108,47 +108,71 @@ main PROC
     ESCREVE 'E', magenta
 
     CALL layout
-    ;PUSH 4
-    ;PUSH 90
-    MOV SI,4
-    MOV DI,90
-    ;========================================================================================
+    MOV SI, 4 ;linha
+    MOV DI, 90 ;coluna
+    MOV CH, 1 ;linha
+    MOV CL, 1 ;coluna
+    PUSH CX
+    POSI 23, 92
+    IMPRIME POSICAO
+    POSI 23, 100
+    OR CH, 30h
+    OR CL, 30h
+    ESCREVE CH, cinzaclaro
+    ESCREVE 'x', cinzaclaro
+    ESCREVE CL, cinzaclaro
+    POP CX
+
 prox4:
-    MOV AH,07h
-    INT 21h
-    CMP AL,'w'
+    MOV AH, 00h
+    INT 16h
+    CMP AH, 72 ;cima
     JNE prox1
-    SUB SI,2
-    JMP TESTEDOKARAIO
+    CMP CH, 1
+    JE prox4
+    SUB SI, 2
+    DEC CH
+    JMP alteraposi
 prox1:
-    CMP AL,'s'
+    CMP AH, 80 ;baixo
     JNE prox2
-    ADD SI,2
-    JMP TESTEDOKARAIO
+    CMP CH, 9
+    JE prox4
+    ADD SI, 2
+    INC CH
+    JMP alteraposi
 prox2:
-    CMP AL,'d'
+    CMP AH, 4Dh ;direita
     JNE prox3
-    ADD DI,2
-    JMP TESTEDOKARAIO
+    CMP CL, 9
+    JE prox4
+    ADD DI, 2
+    INC CL
+    JMP alteraposi
 prox3:
-    CMP AL,'a'
+    CMP AH, 4Bh ;esquerda
     JNE prox4
-    SUB DI,2
-TESTEDOKARAIO:
-    MOV CX, SI 
-    MOV DH, CL 
-    MOV CX, DI          
-    MOV DL, CL 
-    MOV AH, 02h         
-    MOV BH, 0           
-    INT 10h
+    CMP CL, 1
+    JE prox4
+    SUB DI, 2
+    DEC CL
+
+alteraposi:
+    PUSH CX
+    POSI 23, 100
+    OR CH, 30h
+    OR CL, 30h
+    ESCREVE CH, cinzaclaro
+    ESCREVE 'x', cinzaclaro
+    ESCREVE CL, cinzaclaro
+    POP CX
     JMP prox4
 
     MOV AH, 4Ch
     INT 21h
 main ENDP
 
-VERNUM PROC
+vernum PROC
     CMP AL, 0
     JGE compdnv
     IMPRIME ERRO
@@ -158,7 +182,7 @@ VERNUM PROC
     IMPRIME ERRO
     ehnum:
 RET
-VERNUM ENDP
+vernum ENDP
 
 layout PROC 
     CALL numeros
@@ -188,11 +212,12 @@ layout PROC
     COLUNA cinzaescuro, 75, 30, 172
     LINHA cinzaescuro, 75, 172, 219
     COLUNA cinzaescuro 219, 30, 172
+
 RET
 layout ENDP
 
 numeros PROC
-    POSI 23, 91
+    POSI 23, 92
     IMPRIME POSICAO
 
     POSI 4, 88
@@ -279,7 +304,6 @@ numeros PROC
     ESCREVE '2', azul
     POSI 14, 106
     ESCREVE '6', azul
-
     POSI 16, 92
     ESCREVE '6', azul
     POSI 16, 102
@@ -305,67 +329,9 @@ numeros PROC
 RET
 numeros ENDP
 
-cima PROC
-    POP CX 
-    POP DI 
-    POP SI 
-    SUB SI,2
-    MOV AH,0ch 
-    MOV al,vermelho
-    MOV CX, DI 
-    MOV DX, SI
-    int 10h
-    PUSH SI
-    PUSH DI 
-    PUSH CX
-RET 
-cima endP
+cmpnums PROC
 
-baixo PROC
-    POP CX 
-    POP DI 
-    POP SI 
-    ADD SI,2
-    MOV AH,0ch 
-    MOV al,vermelho
-    MOV CX, DI 
-    MOV DX, SI
-    int 10h
-    PUSH SI
-    PUSH DI 
-    PUSH CX
-RET 
-baixo endP
-
-direita PROC
-    POP CX 
-    POP DI 
-    POP SI 
-    ADD DI,2
-    MOV AH,0ch 
-    MOV al,vermelho
-    MOV CX, DI 
-    MOV DX, SI
-    int 10h
-    PUSH SI
-    PUSH DI 
-    PUSH CX
-RET 
-direita endP
-
-esquerda PROC
-    POP CX 
-    POP DI 
-    POP SI 
-    SUB DI,2
-    MOV AH,0ch 
-    MOV al,vermelho
-    MOV CX, DI 
-    MOV DX, SI
-    int 10h
-    PUSH SI
-    PUSH DI 
-    PUSH CX
-RET 
-esquerda endP
+reti:
+RET
+cmpnums ENDP
 end main
