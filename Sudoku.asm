@@ -12,6 +12,26 @@ TITLE PLINIO ZANCHETTA DE SOUZA FERNANDES FILHO - RA:22023003
                   db 39h,36h,31h,35h,33h,37h,32h,38h,34h
                   db 32h,38h,37h,34h,31h,39h,36h,33h,35h
                   db 33h,34h,35h,32h,38h,36h,31h,37h,39h
+    
+    POSICAO DB "POSICAO: $"
+    ERRO DB "ERRO!$"
+
+    SUDOKU DB 10, 10, "                                  SUDOKU$"
+    INSTRUCOES DB 10, "             INSTRUCOES:$"
+    REGRA1 DB 10, 10, "             1. Utilize as setas do teclado para selecionar a$" 
+    REGRA2 DB 10, "             posicao desejada e pressione 'ENTER'.$"
+    REGRA3 DB 10, 10, "             2. Digite o numero desejado (0 a 9).$"
+    REGRA4 DB 10, 10, "             3. O numero pressionado aparecera: - verde se correto$"
+    REGRA5 DB 10, "                                                - vermelho se incorreto$"
+    REGRA6 DB 10, 10, "             4. Voce tem 5 vidas! Cada erro, voce perde uma vida$"
+    COMECAR DB 10, 10, 10, "                                 VAMOS LA!$"
+
+    REINICIAR DB "REINICIAR$"
+    VIDAS DB "VIDAS:$"
+
+    FASE1 DB "[ ] FASE 1$"
+    FASE2 DB "[ ] FASE 2$"
+
 .code
 
     LIMPATELA MACRO 
@@ -73,6 +93,19 @@ TITLE PLINIO ZANCHETTA DE SOUZA FERNANDES FILHO - RA:22023003
         INT 10h
     ENDM
 
+    DELAY MACRO
+        LOCAL pass1
+        LOCAL pass2
+            MOV DI, 0FFFFh
+    pass1:
+        MOV CX, 25
+    pass2:
+        LOOP pass2
+        DEC DI
+        JNZ pass1
+    ENDM
+
+    
     marrom EQU 6h
     cinzaclaro EQU 7h
     cinzaescuro EQU 8h
@@ -84,10 +117,63 @@ TITLE PLINIO ZANCHETTA DE SOUZA FERNANDES FILHO - RA:22023003
     amarelo EQU 0Eh
     branco EQU 0Fh
 
-main PROC
+main PROC 
     MOV AX, @data
     MOV DS, AX
+   
+start:
+    LIMPATELA
+    MOV AH, 0Bh   
+    MOV BH, 0
+    MOV BL, 15 ;cor de fundo
+    INT 10h
 
+    IMPRIME SUDOKU
+    IMPRIME INSTRUCOES
+    IMPRIME REGRA1
+    IMPRIME REGRA2
+    IMPRIME REGRA3
+    IMPRIME REGRA4
+    IMPRIME REGRA5
+    IMPRIME REGRA6
+    IMPRIME COMECAR
+
+    POSI 21, 20
+    IMPRIME FASE1
+    POSI 21, 45
+    IMPRIME FASE2
+    POSI 21, 21
+    ESCREVE 'X', ciano
+
+    MOV CX, 1
+lednv:
+    MOV AH, 00h
+    INT 16h
+    CMP AH, 4Dh ;direita
+    JE direita
+    CMP AH, 4Bh ;esquerda
+    JE esquerda
+    CMP AX, 1C0Dh
+    JNE lednv
+    JMP inicio
+
+esquerda:
+    POSI 21, 46
+    ESCREVE ' ', branco
+    POSI 21, 21
+    ESCREVE 'X', ciano
+    MOV CX, 1
+    JMP lednv
+
+direita:
+    POSI 21, 46
+    ESCREVE 'X', ciano
+    POSI 21, 21
+    ESCREVE ' ', branco
+    MOV CX, 2
+    JMP lednv
+
+inicio:
     LIMPATELA
     MOV AH, 0
     MOV AL, 13
@@ -111,15 +197,25 @@ main PROC
     ESCREVE 'M', magenta
     ESCREVE 'E', magenta
 
+    PUSH CX
     CALL layout
+    POP CX
+testefase:
+    CMP CX, 1
+    JNE fasix2
+    CALL numeros1
+    JMP begin
+fasix2:
+    CALL numeros2
+begin:
     MOV SI, 4 ;linha
     MOV DI, 90 ;coluna
     MOV CH, 1 ;linha
     MOV CL, 1 ;coluna
     PUSH CX
-    POSI 23, 92
+    POSI 23, 93
     IMPRIME POSICAO
-    POSI 23, 100
+    POSI 23, 101
     OR CH, 30h
     OR CL, 30h
     ESCREVE CH, cinzaclaro
@@ -149,21 +245,87 @@ prox2:
     CMP AH, 4Dh ;direita
     JNE prox3
     CMP CL, 9
-    JE prox4
+    JE pintatut
     ADD DI, 2
     INC CL
     JMP alteraposi
 prox3:
     CMP AH, 4Bh ;esquerda
-    JNE prox4
+    JNE prox5
     CMP CL, 1
     JE prox4
     SUB DI, 2
     DEC CL
+    JMP alteraposi
+
+prox5:
+    CMP AX, 1C0Dh
+    JNE prox4
+    MOV DX, SI
+    MOV DH, DL ;linha
+    MOV BX, DI           
+    MOV DL, BL ;coluna 
+    MOV AH, 02h         
+    MOV BH, 0           
+    INT 10h
+    MOV AX, AX
+    MOV AH, 00h
+    INT 16h
+    CMP AL, matriz_result [2][2]
+    JE numeroverde
+    MOV DX, SI
+    MOV DH, DL ;linha
+    MOV BX, DI           
+    MOV DL, BL ;coluna 
+    MOV AH, 02h         
+    MOV BH, 0           
+    INT 10h
+    ESCREVE AL, vermelho
+    JMP prox4
+
+numeroverde:
+    ESCREVE AL, verde
+    JMP prox4
+
+jmpprox4:
+    JMP prox4
+
+pintatut:
+    POSI 19, 109
+    ESCREVE 'R', ciano
+    ESCREVE 'E', ciano
+    ESCREVE 'I', ciano
+    ESCREVE 'N', ciano
+    ESCREVE 'I', ciano
+    ESCREVE 'C', ciano
+    ESCREVE 'I', ciano
+    ESCREVE 'A', ciano
+    ESCREVE 'R', ciano
+    
+    MOV AH, 00h
+    INT 16h
+    CMP AX, 1C0Dh
+    JE jmpstart1
+    CMP AH, 4Bh
+    JNE jmpprox4
+    POSI 19, 109
+    ESCREVE 'R', cinzaclaro
+    ESCREVE 'E', cinzaclaro
+    ESCREVE 'I', cinzaclaro
+    ESCREVE 'N', cinzaclaro
+    ESCREVE 'I', cinzaclaro
+    ESCREVE 'C', cinzaclaro
+    ESCREVE 'I', cinzaclaro
+    ESCREVE 'A', cinzaclaro
+    ESCREVE 'R', cinzaclaro
+    JMP prox4
+
+jmpstart1:
+    CALL jmpstart
 
 alteraposi:
     PUSH CX
-    POSI 23, 100
+    POSI 23, 101
     OR CH, 30h
     OR CL, 30h
     ESCREVE CH, cinzaclaro
@@ -175,6 +337,11 @@ alteraposi:
     MOV AH, 4Ch
     INT 21h
 main ENDP
+
+jmpstart PROC
+    JMP start
+RET
+jmpstart ENDP
 
 vernum PROC
     CMP AL, 0
@@ -189,7 +356,7 @@ RET
 vernum ENDP
 
 layout PROC 
-    CALL numeros
+    CALL numsposi
     ;linhas internas claras
     LINHA cinzaclaro, 75, 45, 219
     LINHA cinzaclaro, 76, 61, 219
@@ -217,51 +384,14 @@ layout PROC
     LINHA cinzaescuro, 75, 172, 219
     COLUNA cinzaescuro 219, 30, 172
 
+    POSI 19, 109
+    IMPRIME REINICIAR
 RET
 layout ENDP
 
-numeros PROC
-    POSI 23, 92
+numeros1 PROC
+    POSI 23, 93
     IMPRIME POSICAO
-
-    POSI 4, 88
-    ESCREVE '1', verde
-    POSI 6, 88
-    ESCREVE '2', verde
-    POSI 8, 88
-    ESCREVE '3', verde
-    POSI 10, 88
-    ESCREVE '4', verde
-    POSI 12, 88
-    ESCREVE '5', verde
-    POSI 14, 88
-    ESCREVE '6', verde
-    POSI 16, 88
-    ESCREVE '7', verde
-    POSI 18, 88
-    ESCREVE '8', verde
-    POSI 20, 88
-    ESCREVE '9', verde
-    
-    POSI 2, 90
-    ESCREVE '1', verde
-    POSI 2, 92
-    ESCREVE '2', verde
-    POSI 2, 94
-    ESCREVE '3', verde
-    POSI 2, 96
-    ESCREVE '4', verde
-    POSI 2, 98
-    ESCREVE '5', verde
-    POSI 2, 100
-    ESCREVE '6', verde
-    POSI 2, 102
-    ESCREVE '7', verde
-    POSI 2, 104
-    ESCREVE '8', verde
-    POSI 2, 106
-    ESCREVE '9', verde
-
 
     POSI 4, 90
     ESCREVE '5', azul
@@ -331,11 +461,120 @@ numeros PROC
     POSI 20, 106
     ESCREVE '9', azul
 RET
-numeros ENDP
+numeros1 ENDP
 
-cmpnums PROC
-
-reti:
+numsposi PROC
+    POSI 4, 88
+    ESCREVE '1', marrom
+    POSI 6, 88
+    ESCREVE '2', marrom
+    POSI 8, 88
+    ESCREVE '3', marrom
+    POSI 10, 88
+    ESCREVE '4', marrom
+    POSI 12, 88
+    ESCREVE '5', marrom
+    POSI 14, 88
+    ESCREVE '6', marrom
+    POSI 16, 88
+    ESCREVE '7', marrom
+    POSI 18, 88
+    ESCREVE '8', marrom
+    POSI 20, 88
+    ESCREVE '9', marrom
+    
+    POSI 2, 90
+    ESCREVE '1', marrom
+    POSI 2, 92
+    ESCREVE '2', marrom
+    POSI 2, 94
+    ESCREVE '3', marrom
+    POSI 2, 96
+    ESCREVE '4', marrom
+    POSI 2, 98
+    ESCREVE '5', marrom
+    POSI 2, 100
+    ESCREVE '6', marrom
+    POSI 2, 102
+    ESCREVE '7', marrom
+    POSI 2, 104
+    ESCREVE '8', marrom
+    POSI 2, 106
+    ESCREVE '9', marrom
 RET
-cmpnums ENDP
+numsposi ENDP
+
+numeros2 PROC
+    POSI 23, 93
+    IMPRIME POSICAO
+
+    POSI 4, 90
+    ESCREVE '1', azul
+    POSI 4, 92
+    ESCREVE '2', azul
+    POSI 4, 98
+    ESCREVE '3', azul
+
+    POSI 6, 90
+    ESCREVE '4', azul
+    POSI 6, 96
+    ESCREVE '5', azul
+    POSI 6, 98
+    ESCREVE '6', azul
+    POSI 6, 100
+    ESCREVE '7', azul
+
+    POSI 8, 92
+    ESCREVE '8', azul
+    POSI 8, 94
+    ESCREVE '9', azul
+    POSI 8, 104
+    ESCREVE '0', azul
+
+    POSI 10, 90
+    ESCREVE '1', azul
+    POSI 10, 98
+    ESCREVE '2', azul
+    POSI 10, 106
+    ESCREVE '3', azul
+
+    POSI 12, 90
+    ESCREVE '4', azul
+    POSI 12, 96
+    ESCREVE '5', azul
+    POSI 12, 100
+    ESCREVE '6', azul
+    POSI 12, 106
+    ESCREVE '7', azul
+
+    POSI 14, 90
+    ESCREVE '8', azul
+    POSI 14, 98
+    ESCREVE '9', azul
+    POSI 14, 106
+    ESCREVE '0', azul
+    POSI 16, 92
+    ESCREVE '1', azul
+    POSI 16, 102
+    ESCREVE '2', azul
+    POSI 16, 104
+    ESCREVE '3', azul
+
+    POSI 18, 96
+    ESCREVE '4', azul
+    POSI 18, 98
+    ESCREVE '5', azul
+    POSI 18, 100
+    ESCREVE '6', azul
+    POSI 18, 106
+    ESCREVE '7', azul
+    
+    POSI 20, 98
+    ESCREVE '8', azul
+    POSI 20, 104
+    ESCREVE '9', azul
+    POSI 20, 106
+    ESCREVE '0', azul
+RET
+numeros2 ENDP
 end main
