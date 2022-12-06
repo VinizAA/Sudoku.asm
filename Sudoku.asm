@@ -1,34 +1,44 @@
-TITLE VINICIUS AFONSO ALVAREZ - RA:22006181
-TITLE PLINIO ZANCHETTA DE SOUZA FERNANDES FILHO - RA:22023003
+TITLE VINICIUS AFONSO ALVAREZ - RA: 22006181
+TITLE PLINIO ZANCHETTA DE SOUZA FERNANDES FILHO - RA: 22023003
 
 .model small
 .data
-    matriz_result db 35h,33h,34h,36h,37h,38h,39h,31h,32h
-                  db 36h,37h,32h,31h,39h,35h,33h,34h,38h
-                  db 31h,39h,38h,33h,34h,32h,35h,36h,37h
-                  db 38h,35h,39h,37h,36h,31h,34h,32h,33h
-                  db 34h,32h,36h,38h,35h,33h,37h,39h,31h
-                  db 37h,31h,33h,39h,32h,34h,38h,35h,36h
-                  db 39h,36h,31h,35h,33h,37h,32h,38h,34h
-                  db 32h,38h,37h,34h,31h,39h,36h,33h,35h
-                  db 33h,34h,35h,32h,38h,36h,31h,37h,39h
+    matriz_result DB 35h, 33h, 34h, 36h, 37h, 38h, 39h, 31h, 32h
+                  DB 36h, 37h, 32h, 31h, 39h, 35h, 33h, 34h, 38h
+                  DB 31h, 39h, 38h, 33h, 34h, 32h, 35h, 36h, 37h
+                  DB 38h, 35h, 39h, 37h, 36h, 31h, 34h, 32h, 33h
+                  DB 34h, 32h, 36h, 38h, 35h, 33h, 37h, 39h, 31h
+                  DB 37h, 31h, 33h, 39h, 32h, 34h, 38h, 35h, 36h
+                  DB 39h, 36h, 31h, 35h, 33h, 37h, 32h, 38h, 34h
+                  DB 32h, 38h, 37h, 34h, 31h, 39h, 36h, 33h, 35h
+                  DB 33h, 34h, 35h, 32h, 38h, 36h, 31h, 37h, 39h
+
+    matriz_result2 DB 35h, 33h, 34h, 36h, 37h, 38h, 39h, 31h, 32h ;arrumar matriz da fase2 (novosnumeros)
+                   DB 36h, 37h, 32h, 31h, 39h, 35h, 33h, 34h, 38h
+                   DB 31h, 39h, 38h, 33h, 34h, 32h, 35h, 36h, 37h
+                   DB 38h, 35h, 39h, 37h, 36h, 31h, 34h, 32h, 33h
+                   DB 34h, 32h, 36h, 38h, 35h, 33h, 37h, 39h, 31h
+                   DB 37h, 31h, 33h, 39h, 32h, 34h, 38h, 35h, 36h
+                   DB 39h, 36h, 31h, 35h, 33h, 37h, 32h, 38h, 34h
+                   DB 32h, 38h, 37h, 34h, 31h, 39h, 36h, 33h, 35h
+                   DB 33h, 34h, 35h, 32h, 38h, 36h, 31h, 37h, 39h
     
     POSICAO DB "POSICAO: $"
     ERRO DB "ERRO!$"
 
-    SUDOKU DB 10, 10, "                                  SUDOKU$"
+    SUDOKU DB 10, 10, 10, "                                  SUDOKU$"
     INSTRUCOES DB 10, "             INSTRUCOES:$"
     REGRA1 DB 10, 10, "             1. Utilize as setas do teclado para selecionar a$" 
     REGRA2 DB 10, "             posicao desejada e pressione 'ENTER'.$"
     REGRA3 DB 10, 10, "             2. Digite o numero desejado (0 a 9).$"
     REGRA4 DB 10, 10, "             3. O numero pressionado aparecera: - verde se correto$"
     REGRA5 DB 10, "                                                - vermelho se incorreto$"
-    REGRA6 DB 10, 10, "             4. Voce tem 5 vidas! Cada erro, voce perde uma vida$"
     COMECAR DB 10, 10, 10, "                                 VAMOS LA!$"
 
     REINICIAR DB "REINICIAR$"
     VIDAS DB "VIDAS:$"
 
+    ESCOLHA DB 10, "                      ESCOLHA A FASE (utiize as setas)$"
     FASE1 DB "[ ] FASE 1$"
     FASE2 DB "[ ] FASE 2$"
 
@@ -105,7 +115,6 @@ TITLE PLINIO ZANCHETTA DE SOUZA FERNANDES FILHO - RA:22023003
         JNZ pass1
     ENDM
 
-    
     marrom EQU 6h
     cinzaclaro EQU 7h
     cinzaescuro EQU 8h
@@ -135,14 +144,15 @@ start:
     IMPRIME REGRA3
     IMPRIME REGRA4
     IMPRIME REGRA5
-    IMPRIME REGRA6
     IMPRIME COMECAR
 
-    POSI 21, 20
+    POSI 18, 18
+    IMPRIME ESCOLHA
+    POSI 21, 22
     IMPRIME FASE1
-    POSI 21, 45
+    POSI 21, 44
     IMPRIME FASE2
-    POSI 21, 21
+    POSI 21, 23
     ESCREVE 'X', ciano
 
     MOV CX, 1
@@ -158,17 +168,17 @@ lednv:
     JMP inicio
 
 esquerda:
-    POSI 21, 46
+    POSI 21, 45
     ESCREVE ' ', branco
-    POSI 21, 21
+    POSI 21, 23
     ESCREVE 'X', ciano
     MOV CX, 1
     JMP lednv
 
 direita:
-    POSI 21, 46
+    POSI 21, 45
     ESCREVE 'X', ciano
-    POSI 21, 21
+    POSI 21, 23
     ESCREVE ' ', branco
     MOV CX, 2
     JMP lednv
@@ -509,72 +519,95 @@ numeros2 PROC
     IMPRIME POSICAO
 
     POSI 4, 90
-    ESCREVE '1', azul
-    POSI 4, 92
+    ESCREVE '5', azul
+    POSI 4, 96
     ESCREVE '2', azul
     POSI 4, 98
     ESCREVE '3', azul
-
-    POSI 6, 90
-    ESCREVE '4', azul
-    POSI 6, 96
-    ESCREVE '5', azul
-    POSI 6, 98
+    POSI 4, 102
+    ESCREVE '8', azul
+    POSI 4, 104
     ESCREVE '6', azul
-    POSI 6, 100
+    POSI 4, 106
     ESCREVE '7', azul
 
-    POSI 8, 92
+    POSI 6, 92
     ESCREVE '8', azul
-    POSI 8, 94
+    POSI 6, 96
     ESCREVE '9', azul
-    POSI 8, 104
-    ESCREVE '0', azul
+    POSI 6, 106
+    ESCREVE '2', azul
 
-    POSI 10, 90
+    POSI 8, 90
+    ESCREVE '2', azul
+    POSI 8, 96
+    ESCREVE '8', azul
+
+    POSI 10, 94
     ESCREVE '1', azul
     POSI 10, 98
+    ESCREVE '9', azul
+    POSI 10, 102
     ESCREVE '2', azul
-    POSI 10, 106
-    ESCREVE '3', azul
+    POSI 10, 104
+    ESCREVE '5', azul
 
-    POSI 12, 90
-    ESCREVE '4', azul
+    POSI 12, 92
+    ESCREVE '2', azul
+    POSI 12, 94
+    ESCREVE '7', azul
     POSI 12, 96
-    ESCREVE '5', azul
-    POSI 12, 100
-    ESCREVE '6', azul
-    POSI 12, 106
-    ESCREVE '7', azul
-
-    POSI 14, 90
-    ESCREVE '8', azul
-    POSI 14, 98
-    ESCREVE '9', azul
-    POSI 14, 106
-    ESCREVE '0', azul
-    POSI 16, 92
-    ESCREVE '1', azul
-    POSI 16, 102
-    ESCREVE '2', azul
-    POSI 16, 104
     ESCREVE '3', azul
-
-    POSI 18, 96
-    ESCREVE '4', azul
-    POSI 18, 98
-    ESCREVE '5', azul
-    POSI 18, 100
+    POSI 12, 98
     ESCREVE '6', azul
-    POSI 18, 106
-    ESCREVE '7', azul
-    
-    POSI 20, 98
+    POSI 12, 100
+    ESCREVE '5', azul
+    POSI 12, 102
+    ESCREVE '1', azul
+
+    POSI 14, 94
+    ESCREVE '5', azul
+    POSI 14, 96
+    ESCREVE '1', azul
+    POSI 14, 98
     ESCREVE '8', azul
-    POSI 20, 104
+    POSI 14, 100
+    ESCREVE '2', azul
+    POSI 14, 102
+    ESCREVE '3', azul
+    POSI 14, 104
+    ESCREVE '7', azul
+
+    POSI 16, 94
+    ESCREVE '2', azul
+    POSI 16, 100
+    ESCREVE '3', azul
+    POSI 16, 104
+    ESCREVE '8', azul
+    POSI 16, 106
+    ESCREVE '1', azul
+
+    POSI 18, 90
+    ESCREVE '6', azul
+    POSI 18, 94
+    ESCREVE '8', azul
+    POSI 18, 98
+    ESCREVE '1', azul
+    POSI 18, 100
     ESCREVE '9', azul
+    POSI 18, 104
+    ESCREVE '2', azul
+    
+    POSI 20, 90
+    ESCREVE '1', azul
+    POSI 20, 92
+    ESCREVE '4', azul
+    POSI 20, 98
+    ESCREVE '2', azul
+    POSI 20, 100
+    ESCREVE '8', azul
     POSI 20, 106
-    ESCREVE '0', azul
+    ESCREVE '5', azul
 RET
 numeros2 ENDP
 end main
