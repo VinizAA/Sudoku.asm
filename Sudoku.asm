@@ -3,6 +3,7 @@ TITLE PLINIO ZANCHETTA DE SOUZA FERNANDES FILHO - RA: 22023003
 
 .model small
 .data
+
     matriz_result DB 35h, 33h, 34h, 36h, 37h, 38h, 39h, 31h, 32h
                   DB 36h, 37h, 32h, 31h, 39h, 35h, 33h, 34h, 38h
                   DB 31h, 39h, 38h, 33h, 34h, 32h, 35h, 36h, 37h
@@ -89,19 +90,23 @@ TITLE PLINIO ZANCHETTA DE SOUZA FERNANDES FILHO - RA: 22023003
     ENDM
     
     ESCREVE MACRO letra, cor
+        ;push bx
         MOV AH, 0Eh
         MOV AL, letra
         MOV BH, 0
         MOV BL, cor
         INT 10h
+        ;pop bx
     ENDM
 
     POSI MACRO linha, coluna
+        ;push bx
         MOV DH, linha           
         MOV DL, coluna 
         MOV AH, 02h         
         MOV BH, 0           
         INT 10h
+        ;pop bx
     ENDM
 
     DELAY MACRO
@@ -249,10 +254,12 @@ begin:
     ESCREVE 'x', cinzaclaro
     ESCREVE CL, cinzaclaro
     POP CX
+    XOR DX, DX
+    XOR BX, BX
 
 prox4:
     MOV AH, 00h
-    INT 16h
+    INT 16h 
     CMP AH, 72 ;cima
     JNE prox1
     CMP CH, 1
@@ -314,9 +321,6 @@ numeroverde:
     ESCREVE AL, verde
     JMP prox4
 
-jmpprox4:
-    JMP prox4
-
 pintatut:
     POSI 19, 109
     ESCREVE 'R', ciano
@@ -336,7 +340,10 @@ pintatut:
 
 reiniciarcinza:
     CMP AH, 4Bh
-    JNE jmpprox4
+    JE reiniciarcinza2
+    JMP prox4
+
+reiniciarcinza2:
     POSI 19, 109
     ESCREVE 'R', cinzaclaro
     ESCREVE 'E', cinzaclaro
@@ -621,4 +628,20 @@ numeros2 PROC
     ESCREVE '5', azul
 RET
 numeros2 ENDP
+
+localizacao PROC 
+    OR CH, 30h
+    OR CL, 30h
+    POSI DH, DL
+    ESCREVE CH, ciano
+    POSI BH, BL
+    ESCREVE CL, ciano
+RET
+localizacao ENDP
 end main
+
+;BH - linha do numero da coluna
+;BL - coluna do numero da coluna
+
+;DH - linha do numero da linha
+;DL - coluna do numero da linha
