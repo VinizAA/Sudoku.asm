@@ -13,15 +13,15 @@ TITLE PLINIO ZANCHETTA DE SOUZA FERNANDES FILHO - RA: 22023003
                   DB 32h, 38h, 37h, 34h, 31h, 39h, 36h, 33h, 35h
                   DB 33h, 34h, 35h, 32h, 38h, 36h, 31h, 37h, 39h
 
-    matriz_result2 DB 35h, 33h, 34h, 36h, 37h, 38h, 39h, 31h, 32h ;arrumar matriz da fase2 (novosnumeros)
-                   DB 36h, 37h, 32h, 31h, 39h, 35h, 33h, 34h, 38h
-                   DB 31h, 39h, 38h, 33h, 34h, 32h, 35h, 36h, 37h
-                   DB 38h, 35h, 39h, 37h, 36h, 31h, 34h, 32h, 33h
-                   DB 34h, 32h, 36h, 38h, 35h, 33h, 37h, 39h, 31h
-                   DB 37h, 31h, 33h, 39h, 32h, 34h, 38h, 35h, 36h
-                   DB 39h, 36h, 31h, 35h, 33h, 37h, 32h, 38h, 34h
-                   DB 32h, 38h, 37h, 34h, 31h, 39h, 36h, 33h, 35h
-                   DB 33h, 34h, 35h, 32h, 38h, 36h, 31h, 37h, 39h
+    matriz_result2 DB 35h, 31h, 39h, 32h, 33h, 34h, 38h, 36h, 37h 
+                   DB 33h, 38h, 34h, 39h, 37h, 36h, 35h, 31h, 32h
+                   DB 32h, 37h, 36h, 38h, 35h, 31h, 39h, 33h, 34h
+                   DB 38h, 33h, 31h, 34h, 39h, 37h, 32h, 35h, 36h
+                   DB 39h, 32h, 37h, 33h, 36h, 35h, 31h, 34h, 38h
+                   DB 34h, 36h, 35h, 31h, 38h, 32h, 33h, 37h, 39h
+                   DB 37h, 39h, 32h, 35h, 34h, 33h, 36h, 38h, 31h
+                   DB 36h, 35h, 38h, 37h, 31h, 39h, 34h, 32h, 33h
+                   DB 31h, 34h, 33h, 36h, 32h, 38h, 37h, 39h, 35h
     
     POSICAO DB "POSICAO: $"
     ERRO DB "ERRO!$"
@@ -33,6 +33,7 @@ TITLE PLINIO ZANCHETTA DE SOUZA FERNANDES FILHO - RA: 22023003
     REGRA3 DB 10, 10, "             2. Digite o numero desejado (0 a 9).$"
     REGRA4 DB 10, 10, "             3. O numero pressionado aparecera: - verde se correto$"
     REGRA5 DB 10, "                                                - vermelho se incorreto$"
+    REGRA6 DB 10, 10, "             4. Existem dois jogos diferentes para jogar!$"
     COMECAR DB 10, 10, 10, "                                 VAMOS LA!$"
 
     REINICIAR DB "REINICIAR$"
@@ -144,15 +145,16 @@ start:
     IMPRIME REGRA3
     IMPRIME REGRA4
     IMPRIME REGRA5
+    IMPRIME REGRA6
     IMPRIME COMECAR
 
-    POSI 18, 18
+    POSI 19, 18
     IMPRIME ESCOLHA
-    POSI 21, 22
+    POSI 22, 22
     IMPRIME FASE1
-    POSI 21, 44
+    POSI 22, 44
     IMPRIME FASE2
-    POSI 21, 23
+    POSI 22, 23
     ESCREVE 'X', ciano
 
     MOV CX, 1
@@ -168,17 +170,17 @@ lednv:
     JMP inicio
 
 esquerda:
-    POSI 21, 45
+    POSI 22, 45
     ESCREVE ' ', branco
-    POSI 21, 23
+    POSI 22, 23
     ESCREVE 'X', ciano
     MOV CX, 1
     JMP lednv
 
 direita:
-    POSI 21, 45
+    POSI 22, 45
     ESCREVE 'X', ciano
-    POSI 21, 23
+    POSI 22, 23
     ESCREVE ' ', branco
     MOV CX, 2
     JMP lednv
@@ -194,18 +196,13 @@ inicio:
     MOV BL, 0Fh ;cor de fundo
     INT 10h
     
-    POSI 0, 93
+    POSI 0, 91
     ESCREVE 'S', magenta
     ESCREVE 'U', magenta
     ESCREVE 'D', magenta
     ESCREVE 'O', magenta
     ESCREVE 'K', magenta
     ESCREVE 'U', magenta
-    ESCREVE ' ', magenta
-    ESCREVE 'G', magenta
-    ESCREVE 'A', magenta
-    ESCREVE 'M', magenta
-    ESCREVE 'E', magenta
 
     PUSH CX
     CALL layout
@@ -213,10 +210,30 @@ inicio:
 testefase:
     CMP CX, 1
     JNE fasix2
+    POSI 0, 97
+    ESCREVE ' ', magenta
+    ESCREVE '-', magenta
+    ESCREVE ' ', magenta
+    ESCREVE 'F', magenta
+    ESCREVE 'A', magenta
+    ESCREVE 'S', magenta
+    ESCREVE 'E', magenta
+    ESCREVE ' ', magenta
+    ESCREVE '1', magenta
     CALL numeros1
     JMP begin
 fasix2:
     CALL numeros2
+    POSI 0, 97
+    ESCREVE ' ', magenta
+    ESCREVE '-', magenta
+    ESCREVE ' ', magenta
+    ESCREVE 'F', magenta
+    ESCREVE 'A', magenta
+    ESCREVE 'S', magenta
+    ESCREVE 'E', magenta
+    ESCREVE ' ', magenta
+    ESCREVE '2', magenta
 begin:
     MOV SI, 4 ;linha
     MOV DI, 90 ;coluna
@@ -311,11 +328,13 @@ pintatut:
     ESCREVE 'I', ciano
     ESCREVE 'A', ciano
     ESCREVE 'R', ciano
-    
     MOV AH, 00h
     INT 16h
     CMP AX, 1C0Dh
-    JE jmpstart1
+    JNE reiniciarcinza
+    JMP start
+
+reiniciarcinza:
     CMP AH, 4Bh
     JNE jmpprox4
     POSI 19, 109
@@ -329,9 +348,6 @@ pintatut:
     ESCREVE 'A', cinzaclaro
     ESCREVE 'R', cinzaclaro
     JMP prox4
-
-jmpstart1:
-    CALL jmpstart
 
 alteraposi:
     PUSH CX
@@ -347,11 +363,6 @@ alteraposi:
     MOV AH, 4Ch
     INT 21h
 main ENDP
-
-jmpstart PROC
-    JMP start
-RET
-jmpstart ENDP
 
 vernum PROC
     CMP AL, 0
