@@ -36,8 +36,7 @@ TITLE PLINIO ZANCHETTA DE SOUZA FERNANDES FILHO - RA: 22023003
     REGRA5 DB 10, "                                                - vermelho se incorreto$"
     REGRA6 DB 10, 10, "             4. Existem dois jogos diferentes para jogar!$"
     COMECAR DB 10, 10, 10, "                                 VAMOS LA!$"
-    i DW ?
-    j DW ?
+
     REINICIAR DB "REINICIAR$"
     VIDAS DB "VIDAS:$"
 
@@ -121,8 +120,6 @@ TITLE PLINIO ZANCHETTA DE SOUZA FERNANDES FILHO - RA: 22023003
         DEC DI
         JNZ pass1
     ENDM
-
-    
 
     marrom EQU 6h
     cinzaclaro EQU 7h
@@ -282,7 +279,9 @@ prox2:
     CMP AH, 4Dh ;direita
     JNE prox3
     CMP CL, 9
-    JE pintatut
+    JNE continuaa
+    JMP pintatut 
+continuaa:
     ADD DI, 2
     INC CL
     JMP alteraposi
@@ -305,26 +304,43 @@ prox5:
     MOV AH, 02h         
     MOV BH, 0           
     INT 10h
-    MOV AX, AX
     MOV AH, 00h
     INT 16h
-    ;========================
 
+
+    PUSH BX                       
+    PUSH SI
+    PUSH DX 
     SUB DH,4
     SHR DH,1
     SUB DL,90
     SHR DL,1
-    PUSH BX
-    PUSH SI
+                         
 
     XOR BX,BX
     MOV BL, DH
+
+
+    XCHG AX,BX
+    PUSH CX 
+    MOV CX,9
+    MUL CL 
+    POP CX 
+    XCHG AX,BX 
+
+
     XOR DH,DH
     MOV SI,DX
+    POP DX
     CMP AL,matriz_result[BX][SI]
+
+
+    
     JE numeroverde
     POP SI 
     POP BX
+
+
     MOV DX, SI
     MOV DH, DL ;linha
     MOV BX, DI           
@@ -336,6 +352,8 @@ prox5:
     JMP prox4
 
 numeroverde:
+    POP SI 
+    POP BX
     ESCREVE AL, verde
     JMP prox4
 
